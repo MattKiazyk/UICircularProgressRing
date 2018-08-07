@@ -136,7 +136,11 @@ fileprivate extension CALayer {
             ringLayer.value = value
         }
     }
-    
+    open var ringHasShadow: Bool = false {
+        didSet {
+            ringLayer.hasShadow = ringHasShadow
+        }
+    }
     /**
      The current value of the progress ring
      
@@ -509,36 +513,6 @@ fileprivate extension CALayer {
     @IBInspectable open var outerRingColor: UIColor = UIColor.gray {
         didSet {
             ringLayer.outerRingColor = outerRingColor
-        }
-    }
-    
-    /**
-     The color for the outer ring border
-     
-     ## Important ##
-     Default = UIColor.gray
-     
-     ## Author
-     Abdulla Allaith
-     */
-    @IBInspectable open var outerBorderColor: UIColor = UIColor.gray {
-        didSet {
-            ringLayer.outerBorderColor = outerBorderColor
-        }
-    }
-    
-    /**
-     The width for the outer ring border
-     
-     ## Important ##
-     Default = 2
-     
-     ## Author
-     Abdulla Allaith
-     */
-    @IBInspectable open var outerBorderWidth: CGFloat = 2 {
-        didSet {
-            ringLayer.outerBorderWidth = outerBorderWidth
         }
     }
     
@@ -970,8 +944,6 @@ fileprivate extension CALayer {
         
         ringLayer.outerRingWidth = outerRingWidth
         ringLayer.outerRingColor = outerRingColor
-        ringLayer.outerBorderWidth = outerBorderWidth
-        ringLayer.outerBorderColor = outerBorderColor
         ringLayer.outerCapStyle = outerCapStyle
         
         ringLayer.innerRingWidth = innerRingWidth

@@ -103,8 +103,6 @@ class UICircularProgressRingLayer: CAShapeLayer {
     @NSManaged var outerRingWidth: CGFloat
     @NSManaged var outerRingColor: UIColor
     @NSManaged var outerCapStyle: CGLineCap
-    @NSManaged var outerBorderColor: UIColor
-    @NSManaged var outerBorderWidth: CGFloat
     
     @NSManaged var innerRingWidth: CGFloat
     @NSManaged var innerRingColor: UIColor
@@ -119,6 +117,8 @@ class UICircularProgressRingLayer: CAShapeLayer {
     @NSManaged var showFloatingPoint: Bool
     @NSManaged var decimalPlaces: Int
     @NSManaged var isClockwise: Bool
+
+    @NSManaged var hasShadow: Bool
     
     var animationDuration: TimeInterval = 1.0
     var animationStyle: String = kCAMediaTimingFunctionEaseInEaseOut
@@ -233,35 +233,13 @@ class UICircularProgressRingLayer: CAShapeLayer {
         switch ringStyle {
             
         case .dashed:
-            outerPath.setLineDash(patternForDashes, count: patternForDashes.count, phase: 0.0)
+            outerPath.setLineDash(patternForDashes,
+                                  count: patternForDashes.count,
+                                  phase: 0.0)
             
         case .dotted:
             outerPath.setLineDash([0, outerPath.lineWidth * 2], count: 2, phase: 0)
             outerPath.lineCapStyle = .round
-        
-        case .bordered:
-            let innerBorder = CAShapeLayer()
-            addSublayer(innerBorder)
-            
-            let roundedRect1 = outerPath.bounds.insetBy(dx: outerRingWidth/2, dy: outerRingWidth/2)
-            let path1 = UIBezierPath(roundedRect: roundedRect1, cornerRadius: outerRadius)
-            innerBorder.path = path1.cgPath
-            innerBorder.fillColor = UIColor.clear.cgColor
-            
-            innerBorder.strokeColor = outerBorderColor.cgColor
-            innerBorder.lineWidth = outerBorderWidth
-            
-            
-            let outerBorder = CAShapeLayer()
-            addSublayer(outerBorder)
-            
-            let roundedRect2 = outerPath.bounds.insetBy(dx: -outerRingWidth/2, dy: -outerRingWidth/2)
-            let path2 = UIBezierPath(roundedRect: roundedRect2, cornerRadius: outerRadius)
-            outerBorder.path = path2.cgPath
-            outerBorder.fillColor = UIColor.clear.cgColor
-            
-            outerBorder.strokeColor = outerBorderColor.cgColor
-            outerBorder.lineWidth = outerBorderWidth
             
         default: break
             
@@ -269,6 +247,19 @@ class UICircularProgressRingLayer: CAShapeLayer {
         
         outerRingColor.setStroke()
         outerPath.stroke()
+
+        // shadow
+        if hasShadow {
+            self.masksToBounds = false
+            self.shadowColor = UIColor.black.cgColor
+            self.shadowOpacity = 0.18
+            self.shadowOffset = CGSize(width: 0, height: 0)
+            self.shadowRadius = 12
+
+            self.shadowPath = outerPath.cgPath
+            self.shouldRasterize = true
+            self.rasterizationScale = UIScreen.main.scale
+        }
     }
 
     /**
